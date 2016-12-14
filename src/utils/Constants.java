@@ -10,9 +10,20 @@ public class Constants
 	public static final int PERCEP_WINDU = 4;
 	public static final int PERCEP_ORO = 5;
 	//public static final int PERCEP_GRITO = 6;
-	public static final int PERCEP_MURO = 7;
-	
+	//public static final int PERCEP_MURO = 7;		
 	public static final int PERCEP_INICIO = 9;
+	
+	
+	//Percepciones compuestas doble
+	public static final int PERCEP_BRISA_HEDOR = 20;
+	public static final int PERCEP_ORO_HEDOR = 21;
+	public static final int PERCEP_ORO_BRISA = 22;
+	public static final int PERCEP_INICIO_HEDOR = 23;
+	public static final int PERCEP_INICIO_BRISA = 24;
+	
+	//Percepciones compuestas triple
+	public static final int PERCEP_INICIO_BRISA_HEDOR = 30;
+	public static final int PERCEP_ORO_BRISA_HEDOR = 31;
 	
 	//Textos de percepciones
 	

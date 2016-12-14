@@ -16,9 +16,11 @@ import core.Coordenadas;
 public class PathFinding 
 {	
 	 public static final int V_H_COST = 1;
+	 private int timeout=0;
+	 private int width, height;
 	
 	//Clase para almacenar las celdas
-	static class Cell{  
+	static class Cell implements Comparable<Cell>{  
         int heuristicCost = 0; //Heuristic cost
         int finalCost = 0; //G+H
         int x, y;
@@ -33,6 +35,14 @@ public class PathFinding
         public String toString(){
             return "["+this.x+", "+this.y+"]";
         }
+
+		@Override
+		public int compareTo(Cell o) 
+		{
+			if(finalCost>o.finalCost)
+				return 1;
+			return -1;
+		}
     }
 	
 	//Cola de prioridad para saber la proxima celda a explorar
@@ -46,7 +56,8 @@ public class PathFinding
     static int endX, endY;
     
     static void checkAndUpdateCost(Cell current, Cell t, int cost){
-        if(t == null || closed[t.x][t.x])return;
+        if(t == null || closed[t.x][t.y])return;
+        
         int t_final_cost = t.heuristicCost+cost;
         
         boolean inOpen = open.contains(t);
@@ -54,8 +65,8 @@ public class PathFinding
             t.finalCost = t_final_cost;
             t.parent = current;
             
-            System.out.println(inOpen);
-            System.out.println(t.x+":"+t.y+" -- "+t.finalCost);
+            //System.out.println(inOpen);
+            //System.out.println(t.x+":"+t.y+" -- "+t.finalCost);
             if(!inOpen)open.add(t);
         }
     }
@@ -63,7 +74,7 @@ public class PathFinding
     {
 		open.add(grid[startX][startY]);
 		Cell current;
-		
+		int aux=0;
 		while(true)
 		{
 			current = open.poll();
@@ -94,12 +105,37 @@ public class PathFinding
                 checkAndUpdateCost(current, t, current.finalCost+V_H_COST); 
             }
 			
+            aux++;
+            if(aux>=timeout)break;
+            //printGrid();
 		}
 		
+    }
+    
+    public void printGrid()
+    {
+    	System.out.println("------------------");
+		for(int x=0;x<width;x++)
+		{
+			for(int y=0;y<height;y++)
+				{
+					if(grid[x][y] != null)
+						System.out.print(grid[x][y].finalCost+" ");
+					else
+						System.out.print("X ");
+				}
+			System.out.println("");
+		}
+		System.out.println("------------------");
     }
 	
 	public boolean start(Coordenadas objetivo, ArrayList<Coordenadas> blocked, int width, int height)
 	{
+		timeout=width*height*2;
+		this.width=width;
+		this.height=height;
+		
+		
 		grid = new Cell[width][height];
 		closed = new boolean [width][height];
 		open = new PriorityQueue<Cell>();
@@ -137,6 +173,7 @@ public class PathFinding
 		
 		
 		AStar(); 
+		
 		
 		if(!closed[endX][endY])		
 			 return false;
