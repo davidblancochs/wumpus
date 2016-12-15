@@ -1,6 +1,7 @@
 package controler;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import core.Hunter;
@@ -33,20 +34,25 @@ public class Main {
 	private static int n_flechas=3;
 	
 	public static void main(String[] args) 
-	{		
-		in = new Scanner(System.in);
-		
+	{	
 		System.out.println("BIENVENIDO A WINDU");
-		System.out.println("Seleccione modo de juego");
-		System.out.println("------------------------\n");
-		System.out.println("1 - Normal (10 ancho, 10 alto, 5 pozos, 1 Windu 1 flecha)");
-		System.out.println("2 - Personalizado");
-		
 		while(true)
 		{
-			//try
-			//{
-				switch(in.nextInt())
+			try
+			{
+				in = new Scanner(System.in);
+				
+				
+				System.out.println("Seleccione modo de juego");
+				System.out.println("------------------------\n");
+				System.out.println("1 - Normal (5 ancho, 5 alto, 5 pozos, 1 Windu 1 flecha)");
+				System.out.println("2 - Personalizado");
+				
+				
+				
+				
+				int a = in.nextInt();
+				switch(a)
 				{
 					case(1): 
 						
@@ -58,11 +64,11 @@ public class Main {
 						select_properties();
 						break;
 				}
-			//}
-			//catch(Exception e)
-			//{
-				//System.out.println("Solo se aceptan numeros validos");
-			//}
+			}
+			catch(InputMismatchException e)
+			{
+				System.out.println("Solo se aceptan numeros validos");
+			}
 			
 		}
 		
@@ -75,12 +81,12 @@ public class Main {
 		
 		while(true)
 		{
-			//try
-			//{
+			try
+			{
 				System.out.println("------------------------\n");
 				System.out.println("Seleccione que propiedades quieres modificar");
-				System.out.println("1 - Ancho del campo");
-				System.out.println("2 - Altura del campo");
+				System.out.println("1 - Ancho del campo - Actual: "+ancho);
+				System.out.println("2 - Altura del campo - Actual: "+alto);
 				System.out.println("3 - Numero de flechas");
 				System.out.println("4 - Modo coger el oro y volver a salida -"+ ((retorno)? "Activo":"Desactivado"));
 				System.out.println("----------------------");
@@ -102,27 +108,27 @@ public class Main {
 						ancho = in.nextInt();						
 						break;
 					case 3: 
-						System.out.println("Introduce el numero de flechas (-1 para flechas infinitas");
+						System.out.println("Introduce el numero de flechas");
 						n_flechas = in.nextInt();
 						//if(n_flechas<-1) throw new Exception();
 						break;
-					case 4: retorno=!retorno;System.out.println("Se ha "+((retorno)?"activado":"desactivado")+" la modalidad de buscar y volver");return;
+					case 4: retorno=!retorno;System.out.println("Se ha "+((retorno)?"activado":"desactivado")+" la modalidad de buscar y volver");break;
 						
 				}
 			}
-			//catch(Exception e)
-			//{
-			//	System.out.println("Solo se aceptan numeros validos");
-			//	select_properties();
-			//}
-		//}		
+			catch(InputMismatchException e)
+			{
+				System.out.println("Solo se aceptan numeros validos");
+				in = new Scanner(System.in);				
+			}
+		}		
 	}
 	public static int SelectAction(boolean salida)
 	{
 		int act=-1;
 		while(act<0 || act > ((salida)?4:5))
 		{
-			mb.to_string(x,y);
+			//mb.to_string(x,y);//SOLO DEBUG
 			System.out.println();
 			System.out.println("----SELECCIONA ACCIÓN----");
 			System.out.println("1 - Avanzar");
@@ -130,14 +136,15 @@ public class Main {
 			System.out.println("3 - Gira 90º grados hacia la derecha");
 			System.out.println("4 - Dispara");
 			if(salida)System.out.println("5 - Salir por la salida");
-			//try
-			//{
+			try
+			{
 				act=in.nextInt();
-			//}
-			//catch(Exception e)
-			//{
-			//	System.out.println("Solo se aceptan numeros validos");
-			//}
+			}
+			catch(InputMismatchException e)
+			{
+				System.out.println("Solo se aceptan numeros validos");
+				in = new Scanner(System.in);
+			}
 			
 		}
 		
@@ -202,7 +209,7 @@ public class Main {
 				int aux=mapa.get(x).get(j);
 				if(aux==PERCEP_WUMPUS || aux ==PERCEP_WUMPUS_BRISA)
 				{
-					mb.removeWumpus(x,j);
+					mb.removeWumpus();
 					return;
 				}
 			}
@@ -214,7 +221,7 @@ public class Main {
 				int aux=mapa.get(x).get(j);
 				if(aux==PERCEP_WUMPUS || aux ==PERCEP_WUMPUS_BRISA)
 				{
-					mb.removeWumpus(x,j);
+					mb.removeWumpus();
 					return;
 				}
 			}					
@@ -226,7 +233,7 @@ public class Main {
 				int aux=mapa.get(i).get(y);
 				if(aux==PERCEP_WUMPUS || aux ==PERCEP_WUMPUS_BRISA)
 				{
-					mb.removeWumpus(i,y);
+					mb.removeWumpus();
 					return;
 				}
 			}				
@@ -238,7 +245,7 @@ public class Main {
 				int aux=mapa.get(i).get(y);
 				if(aux==PERCEP_WUMPUS || aux ==PERCEP_WUMPUS_BRISA)
 				{
-					mb.removeWumpus(i,y);
+					mb.removeWumpus();
 					return;
 				}
 			}					
@@ -278,6 +285,11 @@ public class Main {
 	
 	private static void resolveMove()
 	{
+		if(x>ancho || x<0 || y >alto || y<0)
+		{
+			System.out.println(PERCEP_TXT_MURO);
+			return;
+		}
 		int percep = mapa.get(x).get(y);
 		
 		switch(percep)

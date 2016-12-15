@@ -29,9 +29,9 @@ public class Constants
 	//Textos de percepciones
 	
 	public static final String PERCEP_TXT_NADA = "Nada hay en esta celda";
-	public static final String PERCEP_TXT_HEDOR = "Un nauseabundo hedor se siente en el ambiente \n 　CUIDADO!! La bestia esta cerca";
-	public static final String PERCEP_TXT_BRISA = "Se siente una suave brisa \n 　CUIDADO!! Hay un pozo cerca";
-	public static final String PERCEP_TXT_POZO = "Te precipitas al interior de un pozo \n Nunca podras salir";
+	public static final String PERCEP_TXT_HEDOR = "Un nauseabundo hedor se siente en el ambiente.　CUIDADO!! La bestia esta cerca";
+	public static final String PERCEP_TXT_BRISA = "Se siente una suave brisa. 　CUIDADO!! Hay un pozo cerca";
+	public static final String PERCEP_TXT_POZO = "Te precipitas al interior de un pozo. Nunca podras salir";
 	public static final String PERCEP_TXT_WUMPUS = "Apenas has podido alzar el arco cuando el WUMPUS se ha abalanzado sobre ti.";
 	public static final String PERCEP_TXT_ORO = "Tienes ante ti el misterioso tesoro del WUMPUS";
 	public static final String PERCEP_TXT_INICIO = "Estas en el inicio.";
@@ -60,7 +60,7 @@ public class Constants
 	
 	//Textos intermedios y de fin
 	
-	public static final String INTERMEDIO_TXT_ORO = "Ya tienes el tesoro del WUMPUS \n Corre y escapa con el";
+	public static final String INTERMEDIO_TXT_ORO = "Ya tienes el tesoro del WUMPUS. Corre y escapa con el";
 	public static final String GAMEOVER_BUENO = "HAS GANADO";
 	public static final String GAMEOVER_MALO = "HAS MUERTO";
 	

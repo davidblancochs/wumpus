@@ -174,10 +174,15 @@ public class PathFinding
 		AStar(); 
 		
 		
-		if(!closed[endX][endY])		
-			 return false;
+		if(!closed[endX][endY])	
+		{
+			System.out.println("Volviendo a generar mapa por ser inviable");
+			return false;
+		}			 
 		else
+		{
 			 return true;
+		}
 		
 	}
 

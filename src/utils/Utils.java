@@ -21,7 +21,7 @@ public final class Utils
 	
 	public static final int Random(int techo)
 	{
-		return (int)(Math.random()*10);
+		return (int)(Math.random()*100);
 	}
 
 }

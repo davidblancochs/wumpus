@@ -31,46 +31,6 @@ public class MapBuilder
 	}
 
 	
-	public void to_string() 
-	{
-		for(ArrayList<Integer> x:mapa)
-		{
-			System.out.print('*');
-			for(int y=-1;y<=x.size();y++)
-			{
-				if(y<0 || y==x.size())
-					System.out.print('*');
-				else
-				{
-					switch(x.get(y))
-					{
-						case(PERCEP_NADA):System.out.print("   ");break;
-						case(PERCEP_HEDOR):System.out.print("h  ");break;
-						case(PERCEP_BRISA):System.out.print("b  ");break;
-						case(PERCEP_POZO):System.out.print("O  ");break;
-						case(PERCEP_WUMPUS):System.out.print("W  ");break;
-						case(PERCEP_ORO):System.out.print("$  ");break;
-						case(PERCEP_INICIO):System.out.print("!  ");break;
-						
-						case(PERCEP_BRISA_HEDOR):System.out.print("bh  ");break;
-						case(PERCEP_ORO_HEDOR):System.out.print("$h  ");break;
-						case(PERCEP_ORO_BRISA):System.out.print("$b  ");break;
-						case(PERCEP_INICIO_HEDOR):System.out.print("!h  ");break;
-						case(PERCEP_INICIO_BRISA):System.out.print("!b  ");break;
-						
-						case(PERCEP_INICIO_BRISA_HEDOR):System.out.print("!bs");break;
-						case(PERCEP_ORO_BRISA_HEDOR):System.out.print("$bh");break;
-
-						
-						default:System.out.print("***");break;
-					}
-				}
-			}
-			System.out.println('*');
-		}
-		
-	}
-	
 	//Solo para debugar
 	public void to_string(int i, int j) 
 	{
@@ -121,6 +81,7 @@ public class MapBuilder
 	//Construimos el mapa con todos sus elementos
 	private void build() 
 	{	
+		System.out.println("Generando mapa");
 		do
 		{
 			initial_Grid();
@@ -273,64 +234,40 @@ public class MapBuilder
 	}
 
 	//Metodo para eliminar del mapa el wumpus y su hedor
-	public void removeWumpus(int x, int y) 
+	public void removeWumpus() 
 	{		
-		for(int i=x-1;i<=x+1;i=i+2)
-		{
-			if(x+i>=0 && x+i<ancho && y>=0 &&y<alto)
-			{
-				switch(mapa.get(x+i).get(y))
+		for(int i=0;i<ancho;i++)
+		
+			for(int j=0;j<alto;j++)
+				if(i>=0 && i<ancho && j>=0 && j<alto)
 				{
-					case(PERCEP_HEDOR):
-						mapa.get(x+i).set(y, PERCEP_NADA);break;
-					case(PERCEP_BRISA_HEDOR):
-						mapa.get(x+i).set(y, PERCEP_BRISA);break;
-					case(PERCEP_ORO_HEDOR):
-						mapa.get(x+i).set(y, PERCEP_ORO);break;
-					case(PERCEP_INICIO_HEDOR):
-						mapa.get(x+i).set(y, PERCEP_INICIO);break;
-					
-					case(PERCEP_INICIO_BRISA_HEDOR):
-						mapa.get(x+i).set(y, PERCEP_INICIO_BRISA);break;
-					case(PERCEP_ORO_BRISA_HEDOR):
-						mapa.get(x+i).set(y, PERCEP_ORO_BRISA);break;
-					
-					case(PERCEP_WUMPUS_BRISA):
-						mapa.get(x+i).set(y, PERCEP_BRISA);break;
-					
-					case(PERCEP_WUMPUS):
-						mapa.get(x+i).set(y, PERCEP_NADA);break;
-				}
-			}
-		}
-		for(int j=y-1;j<=y+1;j++)
-		{
-			if(x>=0 && x<ancho && y+j>=0 &&y+j<alto)
-			{
-				switch(mapa.get(x).get(y+j))
-				{
-					case(PERCEP_HEDOR):
-						mapa.get(x).set(y+j, PERCEP_NADA);break;
-					case(PERCEP_BRISA_HEDOR):
-						mapa.get(x).set(y+j, PERCEP_BRISA);break;
-					case(PERCEP_ORO_HEDOR):
-						mapa.get(x).set(y+j, PERCEP_ORO);break;
-					case(PERCEP_INICIO_HEDOR):
-						mapa.get(x).set(y+j, PERCEP_INICIO);break;
-					
-					case(PERCEP_INICIO_BRISA_HEDOR):
-						mapa.get(x).set(y+j, PERCEP_INICIO_BRISA);break;
-					case(PERCEP_ORO_BRISA_HEDOR):
-						mapa.get(x).set(y+j, PERCEP_ORO_BRISA);break;
-					
-					case(PERCEP_WUMPUS_BRISA):
-						mapa.get(x).set(y+j, PERCEP_BRISA);break;
-					
-					case(PERCEP_WUMPUS):
-						mapa.get(x).set(y+j, PERCEP_NADA);break;
-				}
-			}
-		}
+					switch(mapa.get(i).get(j))
+					{
+						case(PERCEP_HEDOR):
+							mapa.get(i).set(j, PERCEP_NADA);break;
+						case(PERCEP_BRISA_HEDOR):
+							mapa.get(i).set(j, PERCEP_BRISA);break;
+						case(PERCEP_ORO_HEDOR):
+							mapa.get(i).set(j, PERCEP_ORO);break;
+						case(PERCEP_INICIO_HEDOR):
+							mapa.get(i).set(j, PERCEP_INICIO);break;
+						
+						case(PERCEP_INICIO_BRISA_HEDOR):
+							mapa.get(i).set(j, PERCEP_INICIO_BRISA);break;
+						case(PERCEP_ORO_BRISA_HEDOR):
+							mapa.get(i).set(j, PERCEP_ORO_BRISA);break;
+						
+						case(PERCEP_WUMPUS_BRISA):
+							mapa.get(i).set(j, PERCEP_BRISA);break;
+						
+						case(PERCEP_WUMPUS):
+							mapa.get(i).set(j, PERCEP_NADA);break;
+					}
+				}		
+		
+		
+			
+		
 		System.out.println(PERCEP_TXT_GRITO);
 	}
 	
