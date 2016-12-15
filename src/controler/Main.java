@@ -44,8 +44,8 @@ public class Main {
 		
 		while(true)
 		{
-			try
-			{
+			//try
+			//{
 				switch(in.nextInt())
 				{
 					case(1): 
@@ -58,11 +58,11 @@ public class Main {
 						select_properties();
 						break;
 				}
-			}
-			catch(Exception e)
-			{
-				System.out.println("Solo se aceptan numeros validos");
-			}
+			//}
+			//catch(Exception e)
+			//{
+				//System.out.println("Solo se aceptan numeros validos");
+			//}
 			
 		}
 		

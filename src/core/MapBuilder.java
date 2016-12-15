@@ -275,23 +275,59 @@ public class MapBuilder
 	//Metodo para eliminar del mapa el wumpus y su hedor
 	public void removeWumpus(int x, int y) 
 	{		
-		for(int i=-1;i<=i+1;i=i+2)
+		for(int i=x-1;i<=x+1;i=i+2)
 		{
-			for(int j=-1;j<=j+1;j++)
+			if(x+i>=0 && x+i<ancho && y>=0 &&y<alto)
 			{
-				switch(mapa.get(i).get(j))
+				switch(mapa.get(x+i).get(y))
 				{
-					case(PERCEP_HEDOR):mapa.get(i).set(j, PERCEP_NADA);break;
-					case(PERCEP_BRISA_HEDOR):mapa.get(i).set(j, PERCEP_BRISA);break;
-					case(PERCEP_ORO_HEDOR):mapa.get(i).set(j, PERCEP_ORO);break;
-					case(PERCEP_INICIO_HEDOR):mapa.get(i).set(j, PERCEP_INICIO);break;
+					case(PERCEP_HEDOR):
+						mapa.get(x+i).set(y, PERCEP_NADA);break;
+					case(PERCEP_BRISA_HEDOR):
+						mapa.get(x+i).set(y, PERCEP_BRISA);break;
+					case(PERCEP_ORO_HEDOR):
+						mapa.get(x+i).set(y, PERCEP_ORO);break;
+					case(PERCEP_INICIO_HEDOR):
+						mapa.get(x+i).set(y, PERCEP_INICIO);break;
 					
-					case(PERCEP_INICIO_BRISA_HEDOR):mapa.get(i).set(j, PERCEP_INICIO_BRISA);break;
-					case(PERCEP_ORO_BRISA_HEDOR):mapa.get(i).set(j, PERCEP_ORO_BRISA);break;
+					case(PERCEP_INICIO_BRISA_HEDOR):
+						mapa.get(x+i).set(y, PERCEP_INICIO_BRISA);break;
+					case(PERCEP_ORO_BRISA_HEDOR):
+						mapa.get(x+i).set(y, PERCEP_ORO_BRISA);break;
 					
-					case(PERCEP_WUMPUS_BRISA):mapa.get(i).set(j, PERCEP_BRISA);break;
+					case(PERCEP_WUMPUS_BRISA):
+						mapa.get(x+i).set(y, PERCEP_BRISA);break;
 					
-					case(PERCEP_WUMPUS):mapa.get(i).set(j, PERCEP_NADA);break;
+					case(PERCEP_WUMPUS):
+						mapa.get(x+i).set(y, PERCEP_NADA);break;
+				}
+			}
+		}
+		for(int j=y-1;j<=y+1;j++)
+		{
+			if(x>=0 && x<ancho && y+j>=0 &&y+j<alto)
+			{
+				switch(mapa.get(x).get(y+j))
+				{
+					case(PERCEP_HEDOR):
+						mapa.get(x).set(y+j, PERCEP_NADA);break;
+					case(PERCEP_BRISA_HEDOR):
+						mapa.get(x).set(y+j, PERCEP_BRISA);break;
+					case(PERCEP_ORO_HEDOR):
+						mapa.get(x).set(y+j, PERCEP_ORO);break;
+					case(PERCEP_INICIO_HEDOR):
+						mapa.get(x).set(y+j, PERCEP_INICIO);break;
+					
+					case(PERCEP_INICIO_BRISA_HEDOR):
+						mapa.get(x).set(y+j, PERCEP_INICIO_BRISA);break;
+					case(PERCEP_ORO_BRISA_HEDOR):
+						mapa.get(x).set(y+j, PERCEP_ORO_BRISA);break;
+					
+					case(PERCEP_WUMPUS_BRISA):
+						mapa.get(x).set(y+j, PERCEP_BRISA);break;
+					
+					case(PERCEP_WUMPUS):
+						mapa.get(x).set(y+j, PERCEP_NADA);break;
 				}
 			}
 		}
