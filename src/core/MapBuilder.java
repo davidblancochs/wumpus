@@ -30,8 +30,8 @@ public class MapBuilder
 		return mapa;
 	}
 
-	@SuppressWarnings("unused")
-	private void to_string() 
+	
+	public void to_string() 
 	{
 		for(ArrayList<Integer> x:mapa)
 		{
@@ -48,7 +48,7 @@ public class MapBuilder
 						case(PERCEP_HEDOR):System.out.print("h  ");break;
 						case(PERCEP_BRISA):System.out.print("b  ");break;
 						case(PERCEP_POZO):System.out.print("O  ");break;
-						case(PERCEP_WINDU):System.out.print("W  ");break;
+						case(PERCEP_WUMPUS):System.out.print("W  ");break;
 						case(PERCEP_ORO):System.out.print("$  ");break;
 						case(PERCEP_INICIO):System.out.print("!  ");break;
 						
@@ -70,7 +70,54 @@ public class MapBuilder
 		}
 		
 	}
-
+	
+	//Solo para debugar
+	public void to_string(int i, int j) 
+	{
+		int aux=0;
+		for(ArrayList<Integer> x:mapa)
+		{
+			System.out.print('*');
+			for(int y=-1;y<=x.size();y++)
+			{
+				if(aux==i && j==y) System.out.print("Y   ");
+					else
+					{
+					if(y<0 || y==x.size())
+						System.out.print('*');
+					else
+					{
+						switch(x.get(y))
+						{
+							case(PERCEP_NADA):System.out.print("   ");break;
+							case(PERCEP_HEDOR):System.out.print("h  ");break;
+							case(PERCEP_BRISA):System.out.print("b  ");break;
+							case(PERCEP_POZO):System.out.print("O  ");break;
+							case(PERCEP_WUMPUS):System.out.print("W  ");break;
+							case(PERCEP_ORO):System.out.print("$  ");break;
+							case(PERCEP_INICIO):System.out.print("!  ");break;
+							
+							case(PERCEP_BRISA_HEDOR):System.out.print("bh  ");break;
+							case(PERCEP_ORO_HEDOR):System.out.print("$h  ");break;
+							case(PERCEP_ORO_BRISA):System.out.print("$b  ");break;
+							case(PERCEP_INICIO_HEDOR):System.out.print("!h  ");break;
+							case(PERCEP_INICIO_BRISA):System.out.print("!b  ");break;
+							case(PERCEP_WUMPUS_BRISA):System.out.print("Wb  ");break;
+							
+							case(PERCEP_INICIO_BRISA_HEDOR):System.out.print("!bs");break;
+							case(PERCEP_ORO_BRISA_HEDOR):System.out.print("$bh");break;
+	
+							
+							default:System.out.print("***");break;
+						}
+					}
+				}
+			}
+			System.out.println('*');
+			aux++;
+		}
+		
+	}
 	//Construimos el mapa con todos sus elementos
 	private void build() 
 	{	
@@ -107,7 +154,7 @@ public class MapBuilder
 							put_ambient(x,y+j,PERCEP_BRISA);
 					}
 				}
-				else if (current==PERCEP_WINDU)
+				else if (current==PERCEP_WUMPUS)
 				{
 					for(int i=-1;i<=1;i+=2)
 					{
@@ -136,6 +183,7 @@ public class MapBuilder
 				case PERCEP_INICIO: mapa.get(x).set(y, PERCEP_INICIO_BRISA);break;
 				case PERCEP_INICIO_HEDOR: mapa.get(x).set(y, PERCEP_INICIO_BRISA_HEDOR);break;
 				case PERCEP_ORO_HEDOR: mapa.get(x).set(y, PERCEP_ORO_BRISA_HEDOR);break;
+				case PERCEP_WUMPUS: mapa.get(x).set(y, PERCEP_WUMPUS_BRISA);break;
 			}
 		}
 		else//Se debe añadir hedor
@@ -153,7 +201,7 @@ public class MapBuilder
 		
 	}
 
-	//Añadimos los pozos y el windu
+	//Añadimos los pozos y el WUMPUS
 	private void add_elements()
 	{
 		Coordenadas aux;
@@ -175,23 +223,23 @@ public class MapBuilder
 		}
 		
 		
-		//Añadimos el WINDU
+		//Añadimos el WUMPUS
 		do
 		{
 			aux=getCoordenadas(alto, ancho);
 		}
 		while(mapa.get(aux.getX()).get(aux.getY())==PERCEP_POZO || mapa.get(aux.getX()).get(aux.getY())==PERCEP_INICIO);
 		//Se añade en un punto que no sea un POZO o inicio
-		mapa.get(aux.getX()).set(aux.getY(), PERCEP_WINDU);	
-		blocked.add(aux);
+		mapa.get(aux.getX()).set(aux.getY(), PERCEP_WUMPUS);	
+		//blocked.add(aux);//Descomentar si no se puede matar al WUMPUS
 		
 		//Añadimos el ORO
 		do
 		{
 			aux=getCoordenadas(alto, ancho);
 		}
-		while(mapa.get(aux.getX()).get(aux.getY())==PERCEP_WINDU ||mapa.get(aux.getX()).get(aux.getY())==PERCEP_POZO || mapa.get(aux.getX()).get(aux.getY())==PERCEP_INICIO);
-		//Se añade en un punto que no sea un POZO, windu o inicio
+		while(mapa.get(aux.getX()).get(aux.getY())==PERCEP_WUMPUS ||mapa.get(aux.getX()).get(aux.getY())==PERCEP_POZO || mapa.get(aux.getX()).get(aux.getY())==PERCEP_INICIO);
+		//Se añade en un punto que no sea un POZO, WUMPUS o inicio
 
 		mapa.get(aux.getX()).set(aux.getY(), PERCEP_ORO);	
 		oro_cord=aux;//Lo necesitamos para saber si es alcanzable
@@ -224,6 +272,32 @@ public class MapBuilder
 		}
 	}
 
+	//Metodo para eliminar del mapa el wumpus y su hedor
+	public void removeWumpus(int x, int y) 
+	{		
+		for(int i=-1;i<=i+1;i=i+2)
+		{
+			for(int j=-1;j<=j+1;j++)
+			{
+				switch(mapa.get(i).get(j))
+				{
+					case(PERCEP_HEDOR):mapa.get(i).set(j, PERCEP_NADA);break;
+					case(PERCEP_BRISA_HEDOR):mapa.get(i).set(j, PERCEP_BRISA);break;
+					case(PERCEP_ORO_HEDOR):mapa.get(i).set(j, PERCEP_ORO);break;
+					case(PERCEP_INICIO_HEDOR):mapa.get(i).set(j, PERCEP_INICIO);break;
+					
+					case(PERCEP_INICIO_BRISA_HEDOR):mapa.get(i).set(j, PERCEP_INICIO_BRISA);break;
+					case(PERCEP_ORO_BRISA_HEDOR):mapa.get(i).set(j, PERCEP_ORO_BRISA);break;
+					
+					case(PERCEP_WUMPUS_BRISA):mapa.get(i).set(j, PERCEP_BRISA);break;
+					
+					case(PERCEP_WUMPUS):mapa.get(i).set(j, PERCEP_NADA);break;
+				}
+			}
+		}
+		System.out.println(PERCEP_TXT_GRITO);
+	}
+	
 	
 	
 	/*public static void main(String[] args) 

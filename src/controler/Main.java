@@ -6,15 +6,31 @@ import java.util.Scanner;
 import core.Hunter;
 import core.MapBuilder;
 
+import static utils.Constants.*;
+
 public class Main {
 
 	/**
 	 * @param args
 	 */
+	private static boolean salida=false;
+	private static boolean resultado=false;
+	private static boolean retorno;
+	
+	
+	private static int alto=5, ancho=5;
+	private static int x=0, y=0;
+	
+	private static MapBuilder mb;
+	
+	
+	
+	private static Hunter pj;
+	
 	
 	private static  ArrayList<ArrayList<Integer>> mapa;
 	private static Scanner in;
-	private static int n_flechas=1;
+	private static int n_flechas=3;
 	
 	public static void main(String[] args) 
 	{		
@@ -33,16 +49,15 @@ public class Main {
 				switch(in.nextInt())
 				{
 					case(1): 
-						mapa = new MapBuilder(10, 10).getMapa();
+						
+						mb = new MapBuilder(ancho, alto);
+						mapa=mb.getMapa();
 						StartGame(n_flechas, false);
-						break;
+						return;
 					case(2):
 						select_properties();
 						break;
 				}
-				
-				
-				
 			}
 			catch(Exception e)
 			{
@@ -54,14 +69,14 @@ public class Main {
 	}
 	private static void select_properties() 
 	{
-		int alto=10, ancho=10, n_flechas=1;
-		boolean retorno=false;
+		int n_flechas=1;
+		retorno=false;
 		
 		
 		while(true)
 		{
-			try
-			{
+			//try
+			//{
 				System.out.println("------------------------\n");
 				System.out.println("Seleccione que propiedades quieres modificar");
 				System.out.println("1 - Ancho del campo");
@@ -74,9 +89,10 @@ public class Main {
 				switch(op)
 				{
 					case 9: 
-						mapa = new MapBuilder(alto, ancho).getMapa();
+						mb = new MapBuilder(ancho, alto);
+						mapa=mb.getMapa();
 						StartGame(n_flechas, retorno);
-						break;
+						return;						
 					case 1: 
 						System.out.println("Introduce un numero mayor que 2");
 						alto = in.nextInt();						
@@ -88,30 +104,275 @@ public class Main {
 					case 3: 
 						System.out.println("Introduce el numero de flechas (-1 para flechas infinitas");
 						n_flechas = in.nextInt();
-						if(n_flechas<-1) throw new Exception();
+						//if(n_flechas<-1) throw new Exception();
 						break;
-					case 4: retorno=!retorno;System.out.println("Se ha "+((retorno)?"activado":"desactivado")+" la modalidad de buscar y volver");break;
+					case 4: retorno=!retorno;System.out.println("Se ha "+((retorno)?"activado":"desactivado")+" la modalidad de buscar y volver");return;
 						
 				}
 			}
-			catch(Exception e)
-			{
-				System.out.println("Solo se aceptan numeros validos");
-				select_properties();
-			}
-		}		
+			//catch(Exception e)
+			//{
+			//	System.out.println("Solo se aceptan numeros validos");
+			//	select_properties();
+			//}
+		//}		
 	}
-	
-	public static void StartGame(int n_flechas, boolean retorno)
+	public static int SelectAction(boolean salida)
 	{
-		Hunter pj= new Hunter(n_flechas);
-		int x=0, y=0;
-		
-		while(true)
+		int act=-1;
+		while(act<0 || act > ((salida)?4:5))
 		{
+			mb.to_string(x,y);
+			System.out.println();
+			System.out.println("----SELECCIONA ACCIÓN----");
+			System.out.println("1 - Avanzar");
+			System.out.println("2 - Gira 90º grados hacia la izquierda");
+			System.out.println("3 - Gira 90º grados hacia la derecha");
+			System.out.println("4 - Dispara");
+			if(salida)System.out.println("5 - Salir por la salida");
+			//try
+			//{
+				act=in.nextInt();
+			//}
+			//catch(Exception e)
+			//{
+			//	System.out.println("Solo se aceptan numeros validos");
+			//}
 			
 		}
 		
+		return act;
+		
+	}	
+	public static void StartGame(int n_flechas, boolean retorno)
+	{
+		pj= new Hunter(n_flechas);
+		resolveMove();//Sacamos la percepcion de la casilla de salida
+		
+		while(!salida)
+		{
+			int action=(x==0 && y==0)?SelectAction(true):SelectAction(false);
+			
+			switch(action)
+			{
+				case(ACTION_MOVE):System.out.println("Avanzas a la siguiente celda");move();break;
+				case(ACTION_TURN_LEFT):System.out.println("Giras en direccion "+pj.rotar(ACTION_TURN_LEFT));resolveMove();break;
+				case(ACTION_TURN_RIGHT):System.out.println("Giras en direccion "+pj.rotar(ACTION_TURN_RIGHT));resolveMove();break;
+				case(ACTION_SHOT):System.out.println("Disparas una de tus flechas");shot();break;
+				case(ACTION_EXIT):System.out.println("Sales del escenario");salir();break;
+			}
+		}
+		
+		gameOver();
+		
+		
 	}
-
+	private static void gameOver() 
+	{
+		if(resultado)
+			System.out.println(GAMEOVER_BUENO);
+		else
+			System.out.println(GAMEOVER_MALO);
+		
+	}
+	private static void salir() 
+	{		
+		if(pj.getGold())
+		{
+			resultado=true;
+			salida=true;			
+		}
+		else
+			System.out.println("No puedes salir sin el tesoro");
+	}
+	private static void shot() 
+	{
+		if(pj.getN_flechas()>0)
+				pj.setN_flechas(pj.getN_flechas()-1);
+		else
+		{
+			System.out.println("No te quedan mas flechas");
+			return;
+		}
+		
+		if(pj.getOrientacion().equals("N"))
+		{		
+			for(int j=x; j<alto;j++)
+			{
+				int aux=mapa.get(x).get(j);
+				if(aux==PERCEP_WUMPUS || aux ==PERCEP_WUMPUS_BRISA)
+				{
+					mb.removeWumpus(x,j);
+					return;
+				}
+			}
+		}else
+		if(pj.getOrientacion().equals("S"))
+		{
+			for(int j=y; j>=0;j--)
+			{
+				int aux=mapa.get(x).get(j);
+				if(aux==PERCEP_WUMPUS || aux ==PERCEP_WUMPUS_BRISA)
+				{
+					mb.removeWumpus(x,j);
+					return;
+				}
+			}					
+		}else
+		if(pj.getOrientacion().equals("E"))
+		{
+			for(int i=y; i<ancho;i++)
+			{
+				int aux=mapa.get(i).get(y);
+				if(aux==PERCEP_WUMPUS || aux ==PERCEP_WUMPUS_BRISA)
+				{
+					mb.removeWumpus(i,y);
+					return;
+				}
+			}				
+		}else
+		if(pj.getOrientacion().equals("O"))
+		{
+			for(int i=y; i>=0;i--)
+			{
+				int aux=mapa.get(i).get(y);
+				if(aux==PERCEP_WUMPUS || aux ==PERCEP_WUMPUS_BRISA)
+				{
+					mb.removeWumpus(i,y);
+					return;
+				}
+			}					
+		}
+		System.out.println("La flecha se pierde en la espesura del bosque");		
+	}
+	
+	
+	private static void move() 
+	{
+		String ori = pj.getOrientacion();		
+		int mov=(ori.equals("N")|| ori.equals("E"))?1:-1;
+		
+		if(ori.equals("N")||ori.equals("S"))//Eje Y
+		{
+			if((y+mov)>alto || (y+mov)<0)
+			{
+				System.out.println(PERCEP_TXT_MURO);
+				return;
+			}
+			y+=mov;
+		}
+		else//Eje X
+		{
+			if((x+mov)>ancho || (x+mov)<0)
+			{
+				System.out.println(PERCEP_TXT_MURO);
+				return;
+			}
+			x+=mov;
+		}
+		
+		resolveMove();
+		
+		
+	}
+	
+	private static void resolveMove()
+	{
+		int percep = mapa.get(x).get(y);
+		
+		switch(percep)
+		{
+			//Percepcion simple
+			case (PERCEP_HEDOR):System.out.println(PERCEP_TXT_HEDOR);break;
+			case (PERCEP_BRISA):System.out.println(PERCEP_TXT_BRISA);break;
+			
+			case (PERCEP_POZO):System.out.println(PERCEP_TXT_POZO);resultado=false;salida=true;break;
+			case (PERCEP_WUMPUS):System.out.println(PERCEP_TXT_WUMPUS);resultado=false;salida=true;break;
+			
+			case (PERCEP_ORO):
+				System.out.println(PERCEP_TXT_ORO);
+				mapa.get(x).set(y, PERCEP_NADA);
+				pj.setGold(true);
+				if(!retorno)
+				{
+					resultado=true;
+					salida=true;
+				}
+				break;
+			
+			case (PERCEP_INICIO):
+				System.out.println(PERCEP_TXT_INICIO);
+				if(pj.getGold() && retorno)
+				{
+					resultado=true;
+					salida=true;
+				}
+				break;
+			
+			//Percepcion doble
+			case (PERCEP_BRISA_HEDOR):System.out.println(PERCEP_TXT_BRISA_HEDOR);break;
+			
+			case (PERCEP_ORO_HEDOR):
+				System.out.println(PERCEP_TXT_ORO_HEDOR);
+				mapa.get(x).set(y, PERCEP_HEDOR);
+				pj.setGold(true);
+				if(!retorno)
+				{
+					resultado=true;
+					salida=true;
+				}
+				break;
+			case (PERCEP_ORO_BRISA):
+				System.out.println(PERCEP_TXT_ORO_BRISA);
+				mapa.get(x).set(y, PERCEP_BRISA);
+				pj.setGold(true);
+				if(!retorno)
+				{
+					resultado=true;
+					salida=true;
+				}
+				break;
+				
+			case (PERCEP_INICIO_HEDOR):
+				System.out.println(PERCEP_TXT_INICIO_HEDOR);
+				if(pj.getGold() && retorno)
+				{
+					resultado=true;
+					salida=true;
+				}
+				break;
+			case (PERCEP_INICIO_BRISA):
+				System.out.println(PERCEP_TXT_INICIO_BRISA);
+				if(pj.getGold() && retorno)
+				{
+					resultado=true;
+					salida=true;
+				}
+				break;
+				
+			case (PERCEP_WUMPUS_BRISA):System.out.println(PERCEP_TXT_INICIO_BRISA);break;
+			
+			//Percepcion triple
+			case (PERCEP_INICIO_BRISA_HEDOR):
+				System.out.println(PERCEP_TXT_INICIO_BRISA_HEDOR);
+				if(pj.getGold() && retorno)
+				{
+					resultado=true;
+					salida=true;
+				}
+				break;
+				
+			case (PERCEP_ORO_BRISA_HEDOR):
+				System.out.println(PERCEP_TXT_ORO_BRISA_HEDOR);
+				mapa.get(x).set(y, PERCEP_BRISA_HEDOR);
+				pj.setGold(true);
+				if(!retorno)
+				{
+					resultado=true;
+					salida=true;
+				}
+				break;
+			
+		};
+	}
 }

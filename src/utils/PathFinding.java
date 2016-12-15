@@ -36,7 +36,6 @@ public class PathFinding
             return "["+this.x+", "+this.y+"]";
         }
 
-		@Override
 		public int compareTo(Cell o) 
 		{
 			if(finalCost>o.finalCost)
