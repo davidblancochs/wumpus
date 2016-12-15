@@ -14,9 +14,9 @@ public class Main {
 	/**
 	 * @param args
 	 */
-	private static boolean salida=false;
-	private static boolean resultado=false;
-	private static boolean retorno;
+	private static boolean salida=false; //True si el juego a terminado
+	private static boolean resultado=false; //True si has ganado. False has perdido
+	private static boolean retorno; //retorno = true -> Hay que coger el oro y volver a salida
 	
 	
 	private static int alto=5, ancho=5;
@@ -29,7 +29,7 @@ public class Main {
 	private static Hunter pj;
 	
 	
-	private static  ArrayList<ArrayList<Integer>> mapa;
+	private static  ArrayList<ArrayList<Integer>> mapa;//Mapa
 	private static Scanner in;
 	private static int n_flechas=3;
 	
@@ -43,6 +43,7 @@ public class Main {
 				in = new Scanner(System.in);
 				
 				
+				//Seleccionamos modalidad de juego
 				System.out.println("Seleccione modo de juego");
 				System.out.println("------------------------\n");
 				System.out.println("1 - Normal (5 ancho, 5 alto, 5 pozos, 1 Windu 1 flecha)");
@@ -56,12 +57,12 @@ public class Main {
 				{
 					case(1): 
 						
-						mb = new MapBuilder(ancho, alto);
+						mb = new MapBuilder(ancho, alto);//Generamos mapa
 						mapa=mb.getMapa();
-						StartGame(n_flechas, false);
+						StartGame(n_flechas, false);//Iniciamos juegos
 						return;
 					case(2):
-						select_properties();
+						select_properties();//Configuramos el mapa
 						break;
 				}
 			}
@@ -82,7 +83,7 @@ public class Main {
 		while(true)
 		{
 			try
-			{
+			{//Configuraremos distintos aspectos del juego
 				System.out.println("------------------------\n");
 				System.out.println("Seleccione que propiedades quieres modificar");
 				System.out.println("1 - Ancho del campo - Actual: "+ancho);
@@ -125,7 +126,7 @@ public class Main {
 	}
 	public static int SelectAction(boolean salida)
 	{
-		int act=-1;
+		int act=-1;//Obtendremos que accion se quiere realizar
 		while(act<0 || act > ((salida)?4:5))
 		{
 			//mb.to_string(x,y);//SOLO DEBUG
@@ -135,7 +136,7 @@ public class Main {
 			System.out.println("2 - Gira 90º grados hacia la izquierda");
 			System.out.println("3 - Gira 90º grados hacia la derecha");
 			System.out.println("4 - Dispara");
-			if(salida)System.out.println("5 - Salir por la salida");
+			if(salida)System.out.println("5 - Salir por la salida"); //Solo disponible si nos encontramos en la salida
 			try
 			{
 				act=in.nextInt();
@@ -153,7 +154,7 @@ public class Main {
 	}	
 	public static void StartGame(int n_flechas, boolean retorno)
 	{
-		pj= new Hunter(n_flechas);
+		pj= new Hunter(n_flechas);//Creamos el objeto cazador
 		resolveMove();//Sacamos la percepcion de la casilla de salida
 		
 		while(!salida)
@@ -170,10 +171,11 @@ public class Main {
 			}
 		}
 		
-		gameOver();
+		gameOver();//Finalizamos el juego
 		
 		
 	}
+	//Finalizamos el jeugo
 	private static void gameOver() 
 	{
 		if(resultado)
@@ -182,6 +184,7 @@ public class Main {
 			System.out.println(GAMEOVER_MALO);
 		
 	}
+	//Cuando salimos por la salida necesitamos comprobar que llevamos el oro
 	private static void salir() 
 	{		
 		if(pj.getGold())
@@ -192,6 +195,7 @@ public class Main {
 		else
 			System.out.println("No puedes salir sin el tesoro");
 	}
+	//Miramos todas las casillas en linea recta del cazador
 	private static void shot() 
 	{
 		if(pj.getN_flechas()>0)
@@ -202,6 +206,8 @@ public class Main {
 			return;
 		}
 		
+		/*Dependiendo de la orientacion, miramos una recta o otra
+		 * Comprobamos si le damos al WUMPUS. Si le damos, llamaremos a removeWumpus*/
 		if(pj.getOrientacion().equals("N"))
 		{		
 			for(int j=x; j<alto;j++)
@@ -259,6 +265,7 @@ public class Main {
 		String ori = pj.getOrientacion();		
 		int mov=(ori.equals("N")|| ori.equals("E"))?1:-1;
 		
+		//Comprobamos que no nos salimos del escenario
 		if(ori.equals("N")||ori.equals("S"))//Eje Y
 		{
 			if((y+mov)>alto || (y+mov)<0)
@@ -278,11 +285,13 @@ public class Main {
 			x+=mov;
 		}
 		
+		//Resolvemos movimiento
 		resolveMove();
 		
 		
 	}
 	
+	//Realizamos el efecto correcto segun la percepcion de la casilla
 	private static void resolveMove()
 	{
 		if(x>ancho || x<0 || y >alto || y<0)
@@ -290,7 +299,7 @@ public class Main {
 			System.out.println(PERCEP_TXT_MURO);
 			return;
 		}
-		int percep = mapa.get(x).get(y);
+		int percep = mapa.get(x).get(y);//Extraemos la percepcion de la casilla a la que nos hemos desplazado
 		
 		switch(percep)
 		{
@@ -298,8 +307,8 @@ public class Main {
 			case (PERCEP_HEDOR):System.out.println(PERCEP_TXT_HEDOR);break;
 			case (PERCEP_BRISA):System.out.println(PERCEP_TXT_BRISA);break;
 			
-			case (PERCEP_POZO):System.out.println(PERCEP_TXT_POZO);resultado=false;salida=true;break;
-			case (PERCEP_WUMPUS):System.out.println(PERCEP_TXT_WUMPUS);resultado=false;salida=true;break;
+			case (PERCEP_POZO):System.out.println(PERCEP_TXT_POZO);resultado=false;salida=true;break;//Activamos la salida del bucle principal
+			case (PERCEP_WUMPUS):System.out.println(PERCEP_TXT_WUMPUS);resultado=false;salida=true;break;//Activamos la salida del bucle principal
 			
 			case (PERCEP_ORO):
 				System.out.println(PERCEP_TXT_ORO);

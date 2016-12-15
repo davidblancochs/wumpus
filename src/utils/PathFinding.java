@@ -50,10 +50,11 @@ public class PathFinding
 	//celdas exploradas
     static boolean closed[][];    
     
-	private Cell[][] grid;
+	private Cell[][] grid; //Escenario
 	static int startX=0, startY=0;
     static int endX, endY;
     
+    //Actualizamos el coste de las celdas que se añaden a la cola de prioridad
     static void checkAndUpdateCost(Cell current, Cell t, int cost){
         if(t == null || closed[t.x][t.y])return;
         
@@ -69,6 +70,8 @@ public class PathFinding
             if(!inOpen)open.add(t);
         }
     }
+    
+    //Algoritmo A*
     public void AStar()
     {
 		open.add(grid[startX][startY]);

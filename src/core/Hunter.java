@@ -4,7 +4,6 @@ import static utils.Constants.*;
 
 public class Hunter 
 {
-	//private int posX=0, posY=0;
 	private String orientacion="N";
 	private int n_flechas;
 	private boolean gold=false;
@@ -14,19 +13,7 @@ public class Hunter
 		super();
 		this.n_flechas = n_flechas;
 	}
-	
-	/*public int getPosX() {
-		return posX;
-	}
-	public void setPosX(int posX) {
-		this.posX = posX;
-	}
-	public int getPosY() {
-		return posY;
-	}
-	public void setPosY(int posY) {
-		this.posY = posY;
-	}*/
+
 	public String getOrientacion() {
 		return orientacion;
 	}

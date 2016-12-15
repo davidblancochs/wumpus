@@ -23,7 +23,6 @@ public class MapBuilder
 		this.alto=alto;
 		
 		build();
-		//to_string();
 	}
 	
 	public ArrayList<ArrayList<Integer>> getMapa() {
@@ -32,7 +31,9 @@ public class MapBuilder
 
 	
 	//Solo para debugar
+	//Dibujamos el mapa completo en pantalla
 	public void to_string(int i, int j) 
+
 	{
 		int aux=0;
 		for(ArrayList<Integer> x:mapa)
@@ -78,15 +79,16 @@ public class MapBuilder
 		}
 		
 	}
-	//Construimos el mapa con todos sus elementos
+	
+	//Construimos el mapa con todos sus elementos	
 	private void build() 
 	{	
 		System.out.println("Generando mapa");
 		do
 		{
-			initial_Grid();
-			add_elements();	
-			//to_string();
+			initial_Grid();//Construimos el mapa inicial basico
+			add_elements();//Añadimos los elementos al escenario
+			
 		}
 		while(!isReacheble());//Comprobamos si el oro es alcanzable
 		
@@ -94,7 +96,9 @@ public class MapBuilder
 		
 	}
 	
-	
+	//Se genera la brisas y los hedores del escenario
+	//Se recorre todo el mapa buscando los pozos y el Wumpus. Una vez se encuentra, las casillas a su alrededor
+	//se les añadira la percepcion de brisa/hedor
 	private void ambient() 
 	{
 		for(int x =0; x<ancho;x++)
@@ -132,6 +136,7 @@ public class MapBuilder
 		}		
 	}
 
+	//Ya que en la casilla puede haber otra percepcion simultaneamente, se debe poner en la casilla la percepccion compuesta
 	private void put_ambient(int x, int y, int percep) 
 	{
 		if(percep==PERCEP_BRISA)//Se debe añadir brisa
@@ -211,7 +216,7 @@ public class MapBuilder
 	private boolean isReacheble() 
 	{
 		PathFinding aux = new PathFinding();
-		return aux.start(oro_cord, blocked, ancho, alto);
+		return aux.start(oro_cord, blocked, ancho, alto);//Para ello se ejecuta un algoritmo A*
 	}
 
 
@@ -265,16 +270,7 @@ public class MapBuilder
 					}
 				}		
 		
-		
-			
-		
 		System.out.println(PERCEP_TXT_GRITO);
 	}
-	
-	
-	
-	/*public static void main(String[] args) 
-	{
-		new MapBuilder(5, 5);
-	}*/
+
 }
