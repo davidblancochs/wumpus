@@ -78,11 +78,11 @@ public class Launcher {
 	public static void askParams () {
 		
 		Scanner keyboard = new Scanner (System.in);
-
 		
-		do{
-			try {
-				
+		try {
+		
+			do{
+					
 				System.out.println("Seleccione número de filas del tablero: ");
 				rows = keyboard.nextInt();
 					
@@ -94,11 +94,12 @@ public class Launcher {
 				
 				System.out.println("Seleccione número de hoyos en el tablero: ");
 				holes = keyboard.nextInt();
-			
-			}catch (Exception ex){
-				System.out.println("Se cargan parámetros por defecto...");
-			}
-		} while (rows < 0 && cols < 0 && arrows < 0 && holes < 0);
+				
+			} while (rows < 0 && cols < 0 && arrows < 0 && holes < 0);
+		
+		}catch (Exception ex){
+			System.out.println("Se cargan parámetros por defecto...");
+		}
 		
 	}
 	
