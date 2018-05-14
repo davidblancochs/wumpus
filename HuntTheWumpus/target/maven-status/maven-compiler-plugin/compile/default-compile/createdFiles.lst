@@ -1,0 +1,14 @@
+text\based\games\htw\model\Box.class
+text\based\games\htw\model\Hole.class
+text\based\games\htw\model\Wumpus.class
+text\based\games\htw\util\Types.class
+text\based\games\htw\board\GameBoard$1.class
+text\based\games\htw\model\Character.class
+text\based\games\htw\util\Types$character.class
+text\based\games\htw\util\Types$perceptions.class
+text\based\games\htw\board\GameBoard.class
+text\based\games\htw\Launcher.class
+text\based\games\htw\util\Types$direction.class
+text\based\games\htw\util\Constants.class
+text\based\games\htw\model\Hunter.class
+text\based\games\htw\model\Position.class
