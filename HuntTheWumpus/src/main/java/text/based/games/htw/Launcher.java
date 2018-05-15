@@ -14,10 +14,22 @@ import text.based.games.htw.board.GameBoard;
  */
 public class Launcher {
 	
-	
+	/*** Parámetros de la aplicación ***/
+	/**
+	 * Número de filas del tablero
+	 */
 	static int rows = -1;
+	/**
+	 * Número de columnas del tablero
+	 */
 	static int cols = -1;
+	/**
+	 * Número de flechas del cazador
+	 */
 	static int arrows = -1;
+	/**
+	 * Número de hoyos en el tablero
+	 */
 	static int holes = -1;
 	
 	
@@ -29,24 +41,31 @@ public class Launcher {
 		
 		String accion;
 		
+		// Preguntamos al usuario los parámetros de la aplicación.
 		askParams();
 		
+		// Inicializamos tablero y lo mostramos por pantalla.
 		GameBoard board = new GameBoard(rows, cols, arrows, holes);
 		board.displayBoard();
 		
+		// Bucle que indica que el juego está activo.
 		while (board.isGameActive()) {
 			
+			// Preguntamos al usaurio la acción que desea realizar.
 			accion = board.askPlayerMove();
 			
+			// Realizamos accion indicada por el usuario.
 			board.makeAction(accion);
 				
-			//Limpiamos la consola
+			// Limpiamos la consola
 			clrscr();
 			
+			// Mostramos tablero con la accion realizada actualizado.
 			board.displayBoard();
 			
 		}
 		
+		// Mensaje con el resultado de la partida
 		if (board.getHunter().isDead()) {
 			System.out.println("¡HAS PERDIDO LA PARTIDA...!");
 		}else{
@@ -77,12 +96,16 @@ public class Launcher {
 	 */
 	public static void askParams () {
 		
+		@SuppressWarnings("resource")
 		Scanner keyboard = new Scanner (System.in);
 		
 		try {
 		
 			do{
 					
+				System.out.println("¡BIENVENIDO A HUNT THE WUMPUS! ");
+				System.out.println("A continuación indique los parámetros de la aplicación, o si desea jugar inmediatamente presione ENTER.");
+				
 				System.out.println("Seleccione número de filas del tablero: ");
 				rows = keyboard.nextInt();
 					
