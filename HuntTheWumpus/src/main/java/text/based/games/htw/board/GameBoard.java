@@ -5,7 +5,6 @@ package text.based.games.htw.board;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
@@ -80,12 +79,60 @@ public class GameBoard {
 	private boolean isGameStart = false;
 	
 	
-	
 	/**
 	 * Constructor de la clase Tablero
+	 * 
+	 * @param rowsNumber
+	 * @param colsNumber
+	 * @param arrowsNumber
+	 * @param holesNumber
 	 */
 	public GameBoard (int rowsNumber, int colsNumber, int arrowsNumber, int holesNumber) {
 
+		// Inicializamos parámetros de la aplicación
+		initParams(rowsNumber, colsNumber, arrowsNumber, holesNumber);
+		
+		// Inicializamos tablero
+		tablero = new Box [ROWS_NUMBER][COLS_NUMBER];
+		// Inicializamos matriz de casillas
+		for (int row=0; row<tablero.length; row++) {
+			for (int col=0; col<tablero[row].length; col++) {
+				tablero[row][col] = new Box();
+			}
+		}
+		
+		// Inicializamos personajes del juego.
+		
+		// El cazador por defecto siempre comienza en la última fila de la primer columna.
+		hunter = new Hunter(ARROWS_NUMBER, ROWS_NUMBER-1, 0);
+		wumpus = new Wumpus(ThreadLocalRandom.current().nextInt(0, ROWS_NUMBER - 1),
+				ThreadLocalRandom.current().nextInt(0, COLS_NUMBER - 1));
+		
+		holes = new ArrayList<>();
+		for (int i=0; i < HOLES_NUMBER; i++){
+			
+			holes.add(new Hole(ThreadLocalRandom.current().nextInt(0, ROWS_NUMBER - 1),
+				ThreadLocalRandom.current().nextInt(0, COLS_NUMBER + -1)));
+			
+		}
+		
+		//Cargamos casillas del tablero con todos los componentes
+		cargarTablero ();
+
+	}// Fin del constructor 
+
+	
+	/**
+	 * Método que inicializa los parámetros de la aplicación con los que se recibe por consola
+	 * o los que hay por defecto, en su caso. 
+	 * 
+	 * @param rowsNumber
+	 * @param colsNumber
+	 * @param arrowsNumber
+	 * @param holesNumber
+	 */
+	private void initParams(int rowsNumber, int colsNumber, int arrowsNumber, int holesNumber) {
+		
 		if (rowsNumber != -1){
 			ROWS_NUMBER = rowsNumber;
 		}else{
@@ -110,37 +157,7 @@ public class GameBoard {
 			HOLES_NUMBER = Constants.HOLES_NUMBER;
 		}
 		
-		tablero = new Box [ROWS_NUMBER][COLS_NUMBER];
-		// Inicializamos matriz de casillas
-		for (int row=0; row<tablero.length; row++) {
-			for (int col=0; col<tablero[row].length; col++) {
-				tablero[row][col] = new Box();
-			}
-		}
-		
-		HashMap<Integer,Integer> posiciones = new HashMap<Integer,Integer>();
-		
-		// Inicializamos personajes del juego.
-		
-		// El cazador por defecto siempre comienza en la última fila de la primer columna.
-		hunter = new Hunter(ARROWS_NUMBER, ROWS_NUMBER-1, 0);
-		wumpus = new Wumpus(ThreadLocalRandom.current().nextInt(0, ROWS_NUMBER - 1),
-				ThreadLocalRandom.current().nextInt(0, COLS_NUMBER - 1));
-		
-		holes = new ArrayList<>();
-		for (int i=0; i < HOLES_NUMBER; i++){
-			
-			holes.add(new Hole(ThreadLocalRandom.current().nextInt(0, ROWS_NUMBER - 1),
-				ThreadLocalRandom.current().nextInt(0, COLS_NUMBER + -1)));
-			
-		}
-		
-		
-		//Cargamos casillas del tablero con todos los componentes
-		cargarTablero ();
-
-	}// Fin del constructor 
-
+	}
 	
 	
 	/**
@@ -178,26 +195,17 @@ public class GameBoard {
 				// Actualizamos la dirección del cazador y descubrimos la casilla actual.
 				if (hunter.getPosicion().getX() == row && hunter.getPosicion().getY() == col && hunter.getDirection() != null ){
 					
+					// Actualizamos percepcion de la casilla actual
 					perceptionSpace.append(getPerceptions(row, col));
+					// Descubrimos casilla actual
 					tablero[row][col].setCovered(false);
 					
-					switch (hunter.getDirection()) {
-					case L:
-						hunterSpace.append(" < |");
-						break;
-					case R:
-						hunterSpace.append(" > |");
-						break;
-					case U:
-						hunterSpace.append(" ^ |");
-						break;
-					case D:
-						hunterSpace.append(" v |");
-						break;
-					}
+					// Actualizamos dirección del cazador
+					hunterSpace.append(getHunterDirection());
+					
 				}else{
+					// Si la caja del tablero esta descubierta, mostramos percepciones
 					if (!tablero[row][col].isCovered()) {
-						//TODO: mostrar percepciones en este espacio, si es que hay.
 						perceptionSpace.append(getPerceptions(row, col));
 					}else{
 						perceptionSpace.append(" ? |");
@@ -205,6 +213,7 @@ public class GameBoard {
 					hunterSpace.append("   |");
 				}
 				
+				// Saltamos de línea al pintar tablero
 				if (col == tablero[row].length - 1) {
 					muro.append("\n");
 					perceptionSpace.append("\n");
@@ -233,10 +242,12 @@ public class GameBoard {
 		
 		boardString.append(muroInferior.toString());
 		
+		// Mostramos posición inicial del cazador.
 		if (!isGameStart){
 			boardString.append("\n  ^");
 		}
 		
+		// Mostramos tablero por pantalla
 		System.out.println(boardString.toString());
 		System.out.println();
 		
@@ -256,8 +267,6 @@ public class GameBoard {
 		
 		int xHunter;
 		int yHunter;
-		int newX = 0;
-		int newY = 0;
 		
 		switch (action.toUpperCase()) {
 		//Comienzo del juego
@@ -283,54 +292,30 @@ public class GameBoard {
 		// Mover cazador
 		case "M":
 			
+			// Recuperamos posición actual del cazador
 			xHunter = hunter.getPosicion().getX();
 			yHunter = hunter.getPosicion().getY();
 			
-			switch (hunter.getDirection()) {
-			case L:
-				newY = yHunter - 1;
-				if (newY >= 0) {
-					hunter.getPosicion().setY(newY);
-					incrementMovesCounter(); // Solo se incrementa si se mueve
-				}
-				break;
-			case R:
-				newY = yHunter + 1;
-				if (newY < COLS_NUMBER) {
-					hunter.getPosicion().setY(newY);
-					incrementMovesCounter(); // Solo se incrementa si se mueve
-				}
-				break;
-			case U:
-				newX = xHunter - 1;
-				if (newX >= 0) {
-					hunter.getPosicion().setX(newX);
-					incrementMovesCounter(); // Solo se incrementa si se mueve
-				}
-				break;
-			case D:
-				newX = xHunter + 1;
-				if (newX < ROWS_NUMBER) {
-					hunter.getPosicion().setX(newX);
-					incrementMovesCounter(); // Solo se incrementa si se mueve
-				}
-				break;
-			}
+			// Movemos al cazador de posición
+			moveHunter(xHunter, yHunter);
 			
+			// Recuperamos posición nueva del cazador
 			xHunter = hunter.getPosicion().getX();
 			yHunter = hunter.getPosicion().getY();
 			
-			// Comprobar que la posición del cazador no coincide con el Wumpus o algún hoyo
+			// Comprobar que la posición del cazador no coincide con el Wumpus o algún hoyo. Si coincide, muere.
 			if (!isValidBox(xHunter, yHunter)){
 				
 				hunter.setDead(true);
 				gameActive = false; // Terminamos el juego
-				
+			
+			// Comprobar si el cazador encontró el oro. Si lo encontró, muestra mensaje.
 			}else if (tablero[xHunter][yHunter].hasGold()){
 				
 				hunter.setFindGold(true);
 				System.out.println("¡ENHORABUENA! Has encontrado el oro. Regresa a la zona de partida para terminar.");
-				
+			
+			// Comprobar si el cazador llegó vivo al punto de partida con el oro recogido.
 			}else if (tablero[xHunter][yHunter].isStartingPoint() && hunter.isFindGold()) {
 				// Si el cazador llega al punto de partida con el oro, termina el juego.
 				gameActive = false;
@@ -342,39 +327,17 @@ public class GameBoard {
 
 			if (hunter.getArrows()>0) {
 				
+				// Recuperamos posición actual del cazador
 				xHunter = hunter.getPosicion().getX();
 				yHunter = hunter.getPosicion().getY();
 				
-				switch (hunter.getDirection()) {
-				case L:
-					newY = yHunter - 1;
-					if (wumpus.getPosicion().matchPosition(xHunter, newY)) {
-						wumpus.setDead(true);
-					}
-					break;
-				case R:
-					newY = yHunter + 1;
-					if (wumpus.getPosicion().matchPosition(xHunter, newY)) {
-						wumpus.setDead(true);
-					}
-					break;
-				case U:
-					newX = xHunter - 1;
-					if (wumpus.getPosicion().matchPosition(newX, yHunter)) {
-						wumpus.setDead(true);
-					}
-					break;
-				case D:
-					newX = xHunter + 1;
-					if (wumpus.getPosicion().matchPosition(newX, yHunter)) {
-						wumpus.setDead(true);
-					}
-					break;
-				}
+				// Comprobamos si la flecha le ha dado al Wumpus y lo marca como muerto en su caso.
+				matchWumpusDead(xHunter, yHunter);
 				
+				// Comprobamos si ha muerto el Wumpus para avisar al usuario
 				if (wumpus.isDead()) {
 					System.out.println("¡ENHORABUENA! Has matado al Wumpus.");
-					//Descubrimos la caja del WUMPUS
+					//Descubrimos la caja del WUMPUS para que el usuario lo vea
 					tablero[wumpus.getPosicion().getX()][wumpus.getPosicion().getY()].setCovered(false);
 				}else{
 					System.out.println("¡LO SIENTO! Has malgastado una flecha.");
@@ -400,6 +363,90 @@ public class GameBoard {
 	
 	
 	/**
+	 * Método que mueve al cazador de posición e incrementa número de movimientos
+	 * 
+	 * @param xHunter
+	 * @param yHunter
+	 */
+	private void moveHunter (int xHunter, int yHunter) {
+		
+		int newX;
+		int newY;
+		
+		switch (hunter.getDirection()) {
+		case L:
+			newY = yHunter - 1;
+			if (newY >= 0) {
+				hunter.getPosicion().setY(newY);
+				incrementMovesCounter(); // Solo se incrementa si se mueve
+			}
+			break;
+		case R:
+			newY = yHunter + 1;
+			if (newY < COLS_NUMBER) {
+				hunter.getPosicion().setY(newY);
+				incrementMovesCounter(); // Solo se incrementa si se mueve
+			}
+			break;
+		case U:
+			newX = xHunter - 1;
+			if (newX >= 0) {
+				hunter.getPosicion().setX(newX);
+				incrementMovesCounter(); // Solo se incrementa si se mueve
+			}
+			break;
+		case D:
+			newX = xHunter + 1;
+			if (newX < ROWS_NUMBER) {
+				hunter.getPosicion().setX(newX);
+				incrementMovesCounter(); // Solo se incrementa si se mueve
+			}
+			break;
+		}
+		
+	}
+	
+	/**
+	 * Método que indica si la flecha le ha dado al Wumpus
+	 * 
+	 * @param xHunter
+	 * @param yHunter
+	 */
+	private void matchWumpusDead (int xHunter, int yHunter) {
+		
+		int newX;
+		int newY;
+		
+		switch (hunter.getDirection()) {
+		case L:
+			newY = yHunter - 1;
+			if (wumpus.getPosicion().matchPosition(xHunter, newY)) {
+				wumpus.setDead(true);
+			}
+			break;
+		case R:
+			newY = yHunter + 1;
+			if (wumpus.getPosicion().matchPosition(xHunter, newY)) {
+				wumpus.setDead(true);
+			}
+			break;
+		case U:
+			newX = xHunter - 1;
+			if (wumpus.getPosicion().matchPosition(newX, yHunter)) {
+				wumpus.setDead(true);
+			}
+			break;
+		case D:
+			newX = xHunter + 1;
+			if (wumpus.getPosicion().matchPosition(newX, yHunter)) {
+				wumpus.setDead(true);
+			}
+			break;
+		}
+		
+	}
+	
+	/**
 	 * Método que indica si la partida aun está activa.
 	 */
 	public boolean isGameActive () {
@@ -416,6 +463,7 @@ public class GameBoard {
 	 */
 	public String askPlayerMove () {
 		
+		@SuppressWarnings("resource")
 		Scanner keyboard = new Scanner (System.in);
 		String accion = "";
 		
@@ -509,6 +557,33 @@ public class GameBoard {
 		
 		// Seteamos punto de partida por defecto
 		tablero[ROWS_NUMBER-1][0].setStartingPoint(true);
+		
+	}
+	
+	
+	/**
+	 * Método que devuelve el String de la dirección a la que apunta el cazador
+	 */
+	public String getHunterDirection () {
+		
+		StringBuilder hunterSpace = new StringBuilder(); 
+		
+		switch (hunter.getDirection()) {
+		case L:
+			hunterSpace.append(" < |");
+			break;
+		case R:
+			hunterSpace.append(" > |");
+			break;
+		case U:
+			hunterSpace.append(" ^ |");
+			break;
+		case D:
+			hunterSpace.append(" v |");
+			break;
+		}
+		
+		return hunterSpace.toString();
 		
 	}
 	
