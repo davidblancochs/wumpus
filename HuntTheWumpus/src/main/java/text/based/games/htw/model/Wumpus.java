@@ -6,8 +6,6 @@ package text.based.games.htw.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import text.based.games.htw.util.Constants;
-
 /**
  * @author Alexis
  *
@@ -98,19 +96,15 @@ public class Wumpus extends Character {
 			getStenchPositions().add(hPosition);
 		}
 		
-		if (this.getPosicion().getX()+1 < Constants.X_BOXES_NUMBER) {
-			x = this.getPosicion().getX()+1;
-			y = this.getPosicion().getY();
-			hPosition = new Position(x, y);
-			getStenchPositions().add(hPosition);
-		}
-		
-		if (this.getPosicion().getY()+1 < Constants.Y_BOXES_NUMBER) {
-			x = this.getPosicion().getX();
-			y = this.getPosicion().getY()+1;
-			hPosition = new Position(x, y);
-			getStenchPositions().add(hPosition);
-		}
+		x = this.getPosicion().getX()+1;
+		y = this.getPosicion().getY();
+		hPosition = new Position(x, y);
+		getStenchPositions().add(hPosition);
+	
+		x = this.getPosicion().getX();
+		y = this.getPosicion().getY()+1;
+		hPosition = new Position(x, y);
+		getStenchPositions().add(hPosition);
 		
 	}
 	

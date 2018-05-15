@@ -6,8 +6,6 @@ package text.based.games.htw.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import text.based.games.htw.util.Constants;
-
 /**
  * @author Alexis
  *
@@ -78,19 +76,15 @@ public class Hole extends Character {
 			getBreezePositions().add(bPosition);
 		}
 		
-		if (this.getPosicion().getX()+1 < Constants.X_BOXES_NUMBER) {
-			x = this.getPosicion().getX()+1;
-			y = this.getPosicion().getY();
-			bPosition = new Position(x, y);
-			getBreezePositions().add(bPosition);
-		}
-		
-		if (this.getPosicion().getY()+1 < Constants.Y_BOXES_NUMBER) {
-			x = this.getPosicion().getX();
-			y = this.getPosicion().getY()+1;
-			bPosition = new Position(x, y);
-			getBreezePositions().add(bPosition);
-		}
+		x = this.getPosicion().getX()+1;
+		y = this.getPosicion().getY();
+		bPosition = new Position(x, y);
+		getBreezePositions().add(bPosition);
+	
+		x = this.getPosicion().getX();
+		y = this.getPosicion().getY()+1;
+		bPosition = new Position(x, y);
+		getBreezePositions().add(bPosition);
 		
 	}
 
