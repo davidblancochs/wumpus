@@ -1,0 +1,24 @@
+Requisitos: 
+
+- Ejecutar con JDK 7 o superior
+
+Ejecución: 
+
+- Ejecutar desde la consola del sistema con el comando java -jar HuntTheWumpus-1.0.0-SNAPSHOT.jar
+
+
+Instrucciones:
+
+Cuando se descubre una casilla se puede encontrar lo siguiente:
+- La 'B' indica la brisa del hoyo
+- La 'S' indica el hedor del Wumpus
+- La 'O' indica un agujero
+- La 'W' indica que encontraste al Wumpus
+- La 'X' indica que el Wumpus está muerto
+
+Acciones:
+
+- Cambiar dirección: A=Izquierda, D=Derecha, W=Arriba, S=Abajo
+- Mover: M
+- Disparar: P
+- Ayuda: H
