@@ -51,7 +51,7 @@ public class WumpusGame {
 		
 		imprimeOpciones();
 		
-		tablero.printTablero();
+		//tablero.printTablero();
 		
 		jugar(jugador, tablero);
 		
