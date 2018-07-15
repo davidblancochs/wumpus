@@ -1,0 +1,8 @@
+Observaciones:
+- El programa está compilado con java8.
+- El programa recibe tres parametros, por este orden: dimensión, número de pozos y número de flechas.
+- Clase principal con el método main: WumpusGame.java. En esta misma clase se puede descomentar la linea tablero.printTablero() para ver la ubicación
+de los elementos sobre el tablero al inicio de la partida.
+- Las instrucciones de los movimientos aparecen al inicio de la partida. Hay que pulsar la letra inicial de la acción + enter: Avanzar, Derecha, Izquierda, Flecha y Salir.
+- Se considera como casilla inicial la que está abajo y a la izquierda del todo y que jugador sale hacia la derecha.
+- Hay 2 clases con varios test unitarios en junit 4
