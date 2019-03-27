@@ -103,7 +103,7 @@ g.foundGold()
 if(g.player.hasGold() and g.events[0] == 'HUNTER_GOT_GOLD'):
     a = True
 g.events.clear()
-#gold is only sensed once
+#gold must be sensed only once
 g.movePlayer()
 g.turnPlayerLeft() 
 g.movePlayer()
@@ -120,7 +120,7 @@ mat = np.zeros([5, 5])
 mat[0, 1]  = ww.WUMPUS
 g = ww.Game(0,0,0, mat)
 g.getNeighbourSignals()
-#Check if Hunter senses well
+#Check if Hunter senses Wumpus
 if('SENSE_WUMPUS' in g.events):
     a = True
 g.turnPlayerRight() 
@@ -135,6 +135,8 @@ else:
       
 
 #Test if Wumpus can be killed and Arrows work as expected
+#Throw arrows in all direction, including Wumpus direction
+#Check arrow number and events
 mat = np.zeros([5, 5])
 mat[0, 4]  = ww.WUMPUS
 g = ww.Game(0,0,5, mat)
