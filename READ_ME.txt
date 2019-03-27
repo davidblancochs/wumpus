@@ -1,18 +1,12 @@
-Carlos Mora Martinez 16/03/2019
+Carlos Mora Martinez 27/03/2019
 
-WUMPUS game
+Works only on python3 (not python 2)
+Use:
+python wumpus.py
+python wumpus.py 25 5 10
 
-USE:
-
-java -jar Game.jar
-
-or:
-java -jar Game.jar 60 5 9
-
-or:
-
-java -jar Game.jar 60 5 9 1
-
+Test:
+python wumpus_test.py
 
 ARGUMENTS:
 	- Number of cells in the cave. It will round down if it is not a perfect square,
@@ -24,8 +18,7 @@ ARGUMENTS:
 	Default values are provided for all parameters.
 	The program can be run passing either:
 		- No argument
-		- The first three arguments
-		- All the arguments
+		- Three arguments
 		
 GAME INSTRUCTIONS:
 
